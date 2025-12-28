@@ -1,3 +1,5 @@
+// index.js — Zenly Backend (FIXED)
+
 const express = require("express");
 const cors = require("cors");
 
@@ -9,11 +11,13 @@ const OPENROUTER_KEY = process.env.OPENROUTER_API_KEY;
 
 console.log("OPENROUTER KEY PRESENT:", !!OPENROUTER_KEY);
 
-app.get("/", (req, res) => {
-  res.send("Zenly backend running ✅");
-});
-
 app.post("/chatProxy", async (req, res) => {
+  if (!OPENROUTER_KEY) {
+    return res.status(500).json({
+      error: "OpenRouter API key missing in backend",
+    });
+  }
+
   try {
     const response = await fetch(
       "https://openrouter.ai/api/v1/chat/completions",
@@ -23,7 +27,7 @@ app.post("/chatProxy", async (req, res) => {
           "Authorization": `Bearer ${OPENROUTER_KEY}`,
           "Content-Type": "application/json",
           "HTTP-Referer": "https://srimathimoon.github.io",
-          "X-Title": "Zenly App"
+          "X-Title": "Zenly App",
         },
         body: JSON.stringify({
           model: "gpt-4o-mini",
@@ -34,20 +38,25 @@ app.post("/chatProxy", async (req, res) => {
     );
 
     const data = await response.json();
-    res.json(data);
+    return res.json(data);
 
   } catch (error) {
     console.error(error);
-    res.status(500).json({
-      choices: [{ message: { content: "I’m here with you 🌿." } }],
+    return res.status(500).json({
+      choices: [
+        {
+          message: { content: "I’m here with you 🌿." },
+        },
+      ],
     });
   }
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+app.listen(PORT, () =>
+  console.log(`✅ Zenly backend running on port ${PORT}`)
+);
+
 
 
 
