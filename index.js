@@ -6,7 +6,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const OPENROUTER_KEY = "PASTE_YOUR_OPENROUTER_KEY_HERE";
+const OPENROUTER_KEY = "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";
 
 app.post("/chatProxy", async (req, res) => {
   try {
