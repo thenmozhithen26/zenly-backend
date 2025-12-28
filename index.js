@@ -6,8 +6,8 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// ⚠️ NEVER hardcode keys in production
-const OPENROUTER_KEY = "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"; // replace with real key or env var
+// ✅ MUST come from Render Environment Variable
+const OPENROUTER_KEY = process.env.OPENROUTER_API_KEY;
 
 app.post("/chatProxy", async (req, res) => {
   try {
@@ -16,7 +16,7 @@ app.post("/chatProxy", async (req, res) => {
       {
         method: "POST",
         headers: {
-          // ✅ FIXED: Authorization must be a STRING
+          // ✅ FIXED (this is the key line)
           "Authorization": `Bearer ${OPENROUTER_KEY}`,
           "Content-Type": "application/json",
         },
@@ -29,16 +29,14 @@ app.post("/chatProxy", async (req, res) => {
     );
 
     const data = await response.json();
-
-    // ✅ IMPORTANT: return OpenRouter response directly
     return res.json(data);
+
   } catch (error) {
+    console.error(error);
     return res.status(500).json({
       choices: [
         {
-          message: {
-            content: "I’m here with you 🌿.",
-          },
+          message: { content: "I’m here with you 🌿." },
         },
       ],
     });
@@ -46,4 +44,4 @@ app.post("/chatProxy", async (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT);
+app.listen(PORT, () => console.log("Backend running"));
