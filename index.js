@@ -1,18 +1,17 @@
-// index.js — Zenly Backend
-
 const express = require("express");
-const fetch = require("node-fetch");
 const cors = require("cors");
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// ✅ OpenRouter API Key from Render Environment Variable
 const OPENROUTER_KEY = process.env.OPENROUTER_API_KEY;
 
-// ⚠️ Debug line can be removed after deployment
 console.log("OPENROUTER KEY PRESENT:", !!OPENROUTER_KEY);
+
+app.get("/", (req, res) => {
+  res.send("Zenly backend running ✅");
+});
 
 app.post("/chatProxy", async (req, res) => {
   try {
@@ -35,21 +34,21 @@ app.post("/chatProxy", async (req, res) => {
     );
 
     const data = await response.json();
-    return res.json(data);
+    res.json(data);
 
   } catch (error) {
     console.error(error);
-    return res.status(500).json({
-      choices: [
-        {
-          message: { content: "I’m here with you 🌿." },
-        },
-      ],
+    res.status(500).json({
+      choices: [{ message: { content: "I’m here with you 🌿." } }],
     });
   }
 });
 
 const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
+
 
 
 
