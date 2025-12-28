@@ -1,3 +1,5 @@
+// index.js — Zenly Backend
+
 const express = require("express");
 const fetch = require("node-fetch");
 const cors = require("cors");
@@ -6,8 +8,11 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// ✅ MUST come from Render Environment Variable
+// ✅ OpenRouter API Key from Render Environment Variable
 const OPENROUTER_KEY = process.env.OPENROUTER_API_KEY;
+
+// ⚠️ Debug line can be removed after deployment
+console.log("OPENROUTER KEY PRESENT:", !!OPENROUTER_KEY);
 
 app.post("/chatProxy", async (req, res) => {
   try {
@@ -16,9 +21,10 @@ app.post("/chatProxy", async (req, res) => {
       {
         method: "POST",
         headers: {
-          // ✅ FIXED (this is the key line)
           "Authorization": `Bearer ${OPENROUTER_KEY}`,
           "Content-Type": "application/json",
+          "HTTP-Referer": "https://srimathimoon.github.io",
+          "X-Title": "Zenly App"
         },
         body: JSON.stringify({
           model: "gpt-4o-mini",
@@ -44,7 +50,7 @@ app.post("/chatProxy", async (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Backend running on port ${PORT}`));
 
-app.listen(PORT, () => console.log("Backend running"));
 
 
