@@ -7,7 +7,7 @@ app.use(cors());
 app.use(express.json());
 
 // ⚠️ NEVER hardcode keys in production
-const OPENROUTER_KEY = "apisk-or-v1-e95039ae23443c2b65e38997485f295bd94ab5564c019112b73a7398b19f5927"; // replace with real key or env var
+const OPENROUTER_KEY = "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"; // replace with real key or env var
 
 app.post("/chatProxy", async (req, res) => {
   try {
